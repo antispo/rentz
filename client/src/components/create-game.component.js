@@ -20,7 +20,7 @@ export default class CreateGame extends React.Component {
     }
     addPlayer = () => {
         this.setState( prevState => {
-            prevState.players.push(this.state.currentPlayer)
+            prevState.players.push({name: prevState.currentPlayer, score: 0})
             prevState.currentPlayer = ''
             return prevState
         })
@@ -56,12 +56,13 @@ export default class CreateGame extends React.Component {
                             {this.state.players.length !== 0 && 
                                 this.state.players.map( (p,k) => {
                                     return (
-                                        <div>{p}</div>
+                                        <div key={k}>{p.name}</div>
                                     )
                                 })
                             }
                         </div>
                         <input type="text" name="player" 
+                            // className="form-control"
                             value={this.state.currentPlayer} 
                             onChange={this.handleNewPlayer} />
                         <button className="btn btn-secondary" onClick={this.addPlayer}>Add</button>

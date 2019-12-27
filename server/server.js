@@ -57,12 +57,15 @@ gameRoutes.route('/add').post( (req, res) => {
 })
 
 gameRoutes.route('/update/:id').post( (req, res) => {
-    console.log(req, res)
+    // console.log("UPDATE:", req.body)
     Game.findById(req.params.id, (err, game) => {
         if (err) {
             res.status(404).json(err)
         } else {
-            game.timestamp = req.body.timestamp
+            console.log('GAME: ', game)
+            game.players = req.body.players
+            game.scores = req.body.scores
+            console.log('GAME after req.body: ', game)
             game.save()
                 .then( g => {
                     res.json(g)

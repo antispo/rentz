@@ -1,6 +1,6 @@
 import React from 'react';
 
-import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/css/dark-bootstrap.min.css'
 
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 
@@ -18,7 +18,7 @@ function App() {
     <Router>
       <div className="container">
         
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+        <nav className="navbar navbar-expand-lg  navbar-dark bg-primary">
           <a className="navbar-brand" href="http://mihaiv.info" target="_blank" rel="noopener noreferrer">
             <img src={logo} width="30" height="30" alt="Rentz Games" />
           </a>

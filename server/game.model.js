@@ -6,7 +6,10 @@ let Game = Schema({
         type: Date,
         default: Date.now
     },
-    players: [String]
+    players: [],
+    history: [],
+    scores: []
+
 })
 
 module.exports = mongoose.model("Game", Game)

@@ -22,16 +22,16 @@ export default class Game extends React.Component {
     componentDidMount = () => {
         axios.get('http://localhost:3002/games/' + this.state._id)
             .then( res => {
-                console.log(res.data)
+                // console.log(res.data)
                 this.setState( prevState => {
-                    let players = []
                     prevState._id = res.data._id
                     prevState.timestamp = res.data.timestamp
-                    res.data.players.forEach( p => {
-                        players.push( { name: p, score: 0} )
-                    })
-                    prevState.players = players
-                    prevState.history.push(new RentzGame(players))
+                    prevState.players = res.data.players
+                    prevState.scores = res.data.scores
+                    // prevState.players = players
+                    // console.log("res.data.players", res.data.players)
+                    // console.log(res.data.history)
+                    prevState.history.push(new RentzGame(res.data.players))
                     prevState.loaded = true
                     return prevState
                 }, () => {
@@ -60,18 +60,7 @@ export default class Game extends React.Component {
             return prevState
         })
     }
-    updateScores = (e) => {
-        
-        e.preventDefault()
-        e.persist()
-        
-        
-        const gameScores = []
-
-        this.state.players.forEach( p => {
-            gameScores.push({name: p.name, value: parseInt(e.target[p.name].value) })
-            e.target[p.name].value = 0
-        })
+    updateScores = (gameScores) => {
 
         const play = [{gameName: this.state.currentGame, gameScores: gameScores}]
 
@@ -85,7 +74,7 @@ export default class Game extends React.Component {
             prevState.scores.forEach( s => {
                 s[0].gameScores.forEach( gs => {
                     prevState.players.forEach( p => {
-                        if (p.name == gs.name) {
+                        if (p.name === gs.name) {
                             p.score += gs.value
                         }
                     })
@@ -102,18 +91,42 @@ export default class Game extends React.Component {
             return prevState
         })
     }
+    saveGame = () => {
+        let game = {...this.state}
+        axios.post('http://localhost:3002/games/update/' + game._id, game)
+            .then( res => {
+                console.log(res)
+            })
+            .catch( err => {
+                console.log(err)
+            })
+        console.log(game)
+    }
     render() {
         if (this.state.loaded === false) {
             return <div>Loading...</div>
         } else {
         const gameState = this.state.history[this.state.index]
-        // console.log(this.state.currentGame)
+        
+        // console.log(this.state.players)
+
         return (
             
             <div>
-                <h4>Game <span>{this.state._id}</span> from <span>{this.state.timestamp}</span></h4>
-                <table className="table table-striped text-center">
-                    <thead className="text-center">
+                <div>
+                    <h3>
+                        Game {" "}
+                        <span className="text-info">
+                            {this.state._id}
+                        </span>
+                        {" "} from {" "}
+                        <span className="text-info">
+                            {(new Date(this.state.timestamp)).toLocaleString()}
+                        </span>
+                    </h3>
+                </div>
+                <table className="table table-striped text-center table-dark">
+                    <thead className="text-center table-primary">
                         <tr>
                             <th></th>
                             { gameState.players.map( (p, k) => {
@@ -123,17 +136,24 @@ export default class Game extends React.Component {
                     </thead>
                     <tbody>
                         { gameState.gameState.map( (g, k) => {
+                            // console.log(g)
                             return (
                                 <tr key={k}>
                                     <td>{g.name}</td>
                                     { g.players.map( (p) => {
+                                        // console.log(p)
                                         return (
                                             p.map( (pp, kk) => { 
                                                 return (
-                                                    <td key={kk}>
-                                                        <input type="checkbox" checked={pp.done} onChange={ () => {
-                                                            this.hadleCheck(pp.id)
-                                                        } } />
+                                                    <td key={kk} className="">
+                                                        <input 
+                                                            type="checkbox" 
+                                                            checked={pp.done} 
+                                                            onChange={ () => {
+                                                                this.hadleCheck(pp.id)
+                                                            }}
+                                                            className=""
+                                                        />
                                                     </td>
                                                 )
                                             })
@@ -145,12 +165,36 @@ export default class Game extends React.Component {
                         })}
                     </tbody>
                 </table>
-                <form onSubmit={this.updateScores}>
+                
+                
+                
+                <div>
+                    <h3>Scores</h3>
+                </div>
+                
+                
+                
+                <form onSubmit={ e => {
+                    e.preventDefault()
+                    // e.persist()
+
+                    const gameScores = []
+
+                    // console.log(e.target)
+                    this.state.players.forEach( p => {
+                        console.log("WTF ---------", p.name, e.target[54564645])
+                        gameScores.push({name: p.name, value: parseInt(e.target[p.name].value) })
+                        e.target[p.name].value = 0
+                    })
+
+                    this.updateScores(gameScores)
+                }}>
                     <table className="table-striped text-center">
-                        <thead>
-                            <tr>
+                        <thead className="table-primary">
+                            <tr className="table-primary">
                                 <th scope="col"></th>
                                 {this.state.players.map( (p,k) =>{
+                                    // console.log(p)
                                     return (
                                         <th scope="col" key={k}>
                                             {p.name}
@@ -161,7 +205,7 @@ export default class Game extends React.Component {
                         </thead>
                         <tbody>
                             <tr>
-                                <td></td>
+                                <td>Totals: </td>
                                 {this.state.players.map( (p,k) =>{
                                     return (
                                         <th key={k}>
@@ -189,8 +233,9 @@ export default class Game extends React.Component {
                             <tr>
                                 <td>
                                     { ( this.state.currentGame !== undefined) 
-                                        && ( this.state.currentGame + " " + this.state.currentTotalPoints) 
-                                        || ("Select game") }
+                                        && this.state.currentGame + " " + this.state.currentTotalPoints }
+                                    { ( this.state.currentGame === undefined) 
+                                        && ("Select game") }
                                 </td>
                                 {this.state.players.map( (p, k) => {
                                     return (
@@ -206,6 +251,7 @@ export default class Game extends React.Component {
                         </tbody>
                     </table>
                 </form>
+                <button className="btn btn-primary" onClick={this.saveGame}>Save Game</button>
             </div>
         )
     }
