@@ -6,23 +6,37 @@ export default class Game extends React.Component {
     constructor(props) {
         super(props)
         const id = props.location.pathname.replace("/game/", "")
-        const players = [{ name: "Ioana", score: 0}, { name: "Magda", score: 0}, { name: "Mihai", score:0 }]
         this.state = {
-            players: players,
+            players: [],
             _id: id,
             timestamp: '',
-            history: [new RentzGame(players)],
+            history: [],
             index: 0,
             scores: [],
             sindex: 0,
             currentGame: undefined,
             currentTotalPoints: 0,
+            loaded: false,
         }
     }
     componentDidMount = () => {
         axios.get('http://localhost:3002/games/' + this.state._id)
             .then( res => {
-                this.setState(res.data)
+                console.log(res.data)
+                this.setState( prevState => {
+                    let players = []
+                    prevState._id = res.data._id
+                    prevState.timestamp = res.data.timestamp
+                    res.data.players.forEach( p => {
+                        players.push( { name: p, score: 0} )
+                    })
+                    prevState.players = players
+                    prevState.history.push(new RentzGame(players))
+                    prevState.loaded = true
+                    return prevState
+                }, () => {
+                    // console.log(this.state)
+                })
             })
     }
     hadleCheck = (id) => {
@@ -89,9 +103,13 @@ export default class Game extends React.Component {
         })
     }
     render() {
+        if (this.state.loaded === false) {
+            return <div>Loading...</div>
+        } else {
         const gameState = this.state.history[this.state.index]
         // console.log(this.state.currentGame)
         return (
+            
             <div>
                 <h4>Game <span>{this.state._id}</span> from <span>{this.state.timestamp}</span></h4>
                 <table className="table table-striped text-center">
@@ -190,6 +208,7 @@ export default class Game extends React.Component {
                 </form>
             </div>
         )
+    }
     }
 }
 

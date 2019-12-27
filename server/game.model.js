@@ -5,7 +5,8 @@ let Game = Schema({
     timestamp: {
         type: Date,
         default: Date.now
-    }
+    },
+    players: [String]
 })
 
 module.exports = mongoose.model("Game", Game)
