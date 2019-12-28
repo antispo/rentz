@@ -30,8 +30,8 @@ export default class Game extends React.Component {
                     prevState.scores = res.data.scores
                     // prevState.players = players
                     // console.log("res.data.players", res.data.players)
-                    // console.log(res.data.history)
-                    prevState.history.push(new RentzGame(res.data.players))
+                    prevState.history = res.data.history
+                    // prevState.history.push(new RentzGame(res.data.players))
                     prevState.loaded = true
                     return prevState
                 }, () => {
@@ -48,16 +48,22 @@ export default class Game extends React.Component {
                 gs.players.forEach( p => {
                     p.forEach( pp => {
                         if (id === pp.id) {
+                            // console.log(pp)
                             prevState.currentGame = gs.name
                             prevState.currentTotalPoints = lastEntry.scoreBar[gs.name]
+                            
                             pp.done = !pp.done
+                            console.log("pp.done", pp.done)
                         }
                     })
                 })
             })
             prevState.history.push(lastEntry)
+            // console.log(lastEntry)
             prevState.index++
             return prevState
+        }, () => {
+            console.log(this.state.history)
         })
     }
     updateScores = (gameScores) => {
@@ -100,15 +106,16 @@ export default class Game extends React.Component {
             .catch( err => {
                 console.log(err)
             })
-        console.log(game)
+        console.log('saveGame', game)
     }
     render() {
         if (this.state.loaded === false) {
             return <div>Loading...</div>
         } else {
+            console.log(this.state.history, this.state.index)
         const gameState = this.state.history[this.state.index]
         
-        // console.log(this.state.players)
+        // console.log("gameState", gameState)
 
         return (
             
@@ -255,40 +262,5 @@ export default class Game extends React.Component {
             </div>
         )
     }
-    }
-}
-
-class RentzGame {
-    constructor(players) {
-        this.players = players
-        let s = 0
-        for (let i=1; i<players.length; i++) {
-            s += i * 100
-        }
-        let i = 0;
-        this.gameState = (
-            ["King", "queens", "rombs", "hands", "tplus", "tminus", "rents"].map( g => {
-                return {
-                    name: g,
-                    players: [
-                        players.map(p => {
-                            i++
-                            return { id: i, done: false, }
-                        })                   
-                    ]
-                }
-            })
-        )
-
-        this.scoreBar = {
-            "select": "---",
-            "King": -100, 
-            "queens": -100,
-            "rombs": -120,
-            "hands": -80, 
-            "tplus": 400,
-            "tminus": -400,
-            "rents": s
-        }
     }
 }

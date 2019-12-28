@@ -3,6 +3,8 @@ import DateTimePicker from 'react-datetime-picker'
 
 import axios from 'axios'
 
+import { RentzGame } from './rentz.component'
+
 export default class CreateGame extends React.Component {
     constructor(props) {
         super(props)
@@ -32,7 +34,8 @@ export default class CreateGame extends React.Component {
 
         const newGame = {
             timestamp: this.state.timestamp,
-            players: this.state.players
+            players: this.state.players,
+            history: [new RentzGame(this.state.players)]
         }
 
         axios.post('http://localhost:3002/games/add', newGame)

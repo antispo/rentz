@@ -46,6 +46,7 @@ gameRoutes.route('/:id').get( (req, res) => {
 
 gameRoutes.route('/add').post( (req, res) => {
     let game = new Game(req.body)
+    console.log("/add: ", game)
     game.save()
         .then( g => {
             res.json(g)
@@ -57,7 +58,7 @@ gameRoutes.route('/add').post( (req, res) => {
 })
 
 gameRoutes.route('/update/:id').post( (req, res) => {
-    // console.log("UPDATE:", req.body)
+    console.log("UPDATE:", req.body)
     Game.findById(req.params.id, (err, game) => {
         if (err) {
             res.status(404).json(err)
@@ -65,7 +66,7 @@ gameRoutes.route('/update/:id').post( (req, res) => {
             console.log('GAME: ', game)
             game.players = req.body.players
             game.scores = req.body.scores
-            console.log('GAME after req.body: ', game)
+            // console.log('GAME after req.body: ', game)
             game.save()
                 .then( g => {
                     res.json(g)
