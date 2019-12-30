@@ -5,6 +5,8 @@ import axios from 'axios'
 
 import { RentzGame } from './rentz.component'
 
+import API_URL from './api'
+
 export default class CreateGame extends React.Component {
     constructor(props) {
         super(props)
@@ -13,6 +15,7 @@ export default class CreateGame extends React.Component {
             currentPlayer: '',
             players: []
         }
+        this.myRef = React.createRef()
     }
     onChangeGameTimestamp = date => {
         this.setState({timestamp: date})   
@@ -38,9 +41,9 @@ export default class CreateGame extends React.Component {
             history: [new RentzGame(this.state.players)]
         }
 
-        axios.post('http://localhost:3002/games/add', newGame)
+        axios.post(API_URL + '/games/add', newGame)
             .then( res => {
-                console.log(res)
+                console.log(res.data._id)
             })
 
         this.setState({timestamp: new Date(), players: []})
@@ -64,11 +67,15 @@ export default class CreateGame extends React.Component {
                                 })
                             }
                         </div>
-                        <input type="text" name="player" 
+                        <input type="text" name="player" ref={this.myRef}
                             // className="form-control"
                             value={this.state.currentPlayer} 
                             onChange={this.handleNewPlayer} />
-                        <button className="btn btn-secondary" onClick={this.addPlayer}>Add</button>
+                        <button className="btn btn-secondary" onClick={ e => {
+                            this.addPlayer()
+                            console.log(this.myRef)
+                            this.myRef.current.focus()
+                        }}>Add</button>
                         <br />
                         <button
                             className="btn btn-primary btn-inline"

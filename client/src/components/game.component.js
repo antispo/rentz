@@ -2,6 +2,8 @@ import React from 'react'
 
 import axios from 'axios'
 
+import API_URL from './api'
+
 export default class Game extends React.Component {
     constructor(props) {
         super(props)
@@ -20,7 +22,7 @@ export default class Game extends React.Component {
         }
     }
     componentDidMount = () => {
-        axios.get('http://localhost:3002/games/' + this.state._id)
+        axios.get(API_URL + '/games/' + this.state._id)
             .then( res => {
                 // console.log(res.data)
                 this.setState( prevState => {
@@ -31,6 +33,7 @@ export default class Game extends React.Component {
                     // prevState.players = players
                     // console.log("res.data.players", res.data.players)
                     prevState.history = res.data.history
+                    prevState.index = res.data.history.length - 1
                     // prevState.history.push(new RentzGame(res.data.players))
                     prevState.loaded = true
                     return prevState
@@ -42,8 +45,8 @@ export default class Game extends React.Component {
     hadleCheck = (id) => {
         // console.log(this.state.index)
         this.setState( prevState => {
-            const history = prevState.history
-            const lastEntry = history[prevState.index]
+            // const history = prevState.history
+            const lastEntry = {...prevState.history[prevState.index]}
             lastEntry.gameState.forEach( gs => {
                 gs.players.forEach( p => {
                     p.forEach( pp => {
@@ -52,8 +55,15 @@ export default class Game extends React.Component {
                             prevState.currentGame = gs.name
                             prevState.currentTotalPoints = lastEntry.scoreBar[gs.name]
                             
-                            pp.done = !pp.done
-                            console.log("pp.done", pp.done)
+                            //TODO: change it to 0 or 1
+                            // console.log("pp.done", pp.done)
+                            if ( pp.done === 0) {
+                                pp.done = 1
+                            } else if (pp.done === 1) {
+                                pp.done = 0
+                            }
+                            // pp.done = !pp.done
+                            // console.log("pp.done", pp.done)
                         }
                     })
                 })
@@ -63,7 +73,7 @@ export default class Game extends React.Component {
             prevState.index++
             return prevState
         }, () => {
-            console.log(this.state.history)
+            // console.log(this.state.history)
         })
     }
     updateScores = (gameScores) => {
@@ -90,7 +100,10 @@ export default class Game extends React.Component {
         })
     }
     handleScoreChange = (e) => {
-        const value = parseInt(e.target.value)
+        let value = parseInt(e.target.value)
+        if (isNaN(value)) {
+            value = 0
+        }
         // console.log(value, this.state.currentTotalPoints)
         this.setState( prevState => {
             prevState.currentTotalPoints -= value
@@ -99,20 +112,20 @@ export default class Game extends React.Component {
     }
     saveGame = () => {
         let game = {...this.state}
-        axios.post('http://localhost:3002/games/update/' + game._id, game)
+        console.log('saveGame', game.history)
+        axios.post(API_URL + '/games/update/' + game._id, game)
             .then( res => {
-                console.log(res)
+                // console.log(res)
             })
             .catch( err => {
-                console.log(err)
+                // console.log(err)
             })
-        console.log('saveGame', game)
     }
     render() {
         if (this.state.loaded === false) {
             return <div>Loading...</div>
         } else {
-            console.log(this.state.history, this.state.index)
+            // console.log(this.state.history, this.state.index)
         const gameState = this.state.history[this.state.index]
         
         // console.log("gameState", gameState)
@@ -151,11 +164,12 @@ export default class Game extends React.Component {
                                         // console.log(p)
                                         return (
                                             p.map( (pp, kk) => { 
+                                                // console.log(pp.done)
                                                 return (
                                                     <td key={kk} className="">
                                                         <input 
                                                             type="checkbox" 
-                                                            checked={pp.done} 
+                                                            checked={pp.done === 1} 
                                                             onChange={ () => {
                                                                 this.hadleCheck(pp.id)
                                                             }}
@@ -189,9 +203,14 @@ export default class Game extends React.Component {
 
                     // console.log(e.target)
                     this.state.players.forEach( p => {
-                        console.log("WTF ---------", p.name, e.target[54564645])
-                        gameScores.push({name: p.name, value: parseInt(e.target[p.name].value) })
-                        e.target[p.name].value = 0
+                        // console.log("WTF ---------", p.name, e.target[54564645])
+                        let enteredScore = parseInt(e.target[p.name].value)
+                        // console.log(enteredScore)
+                        if ( isNaN(enteredScore)) {
+                            enteredScore = 0
+                        }
+                        gameScores.push({name: p.name, value: enteredScore })
+                        e.target[p.name].value = ''
                     })
 
                     this.updateScores(gameScores)
@@ -247,7 +266,7 @@ export default class Game extends React.Component {
                                 {this.state.players.map( (p, k) => {
                                     return (
                                         <td key={k}>
-                                            <input defaultValue={0} name={p.name} onBlur={this.handleScoreChange} />
+                                            <input defaultValue="" name={p.name} onBlur={this.handleScoreChange} />
                                         </td>
                                     )
                                 })}

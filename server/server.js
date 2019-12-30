@@ -6,7 +6,7 @@ const mongoose = require('mongoose')
 
 const gameRoutes = express.Router()
 
-const PORT = 3002
+const PORT = 37302
 
 let Game = require('./game.model')
 
@@ -46,7 +46,7 @@ gameRoutes.route('/:id').get( (req, res) => {
 
 gameRoutes.route('/add').post( (req, res) => {
     let game = new Game(req.body)
-    console.log("/add: ", game)
+    // console.log("/add: ", game)
     game.save()
         .then( g => {
             res.json(g)
@@ -58,14 +58,15 @@ gameRoutes.route('/add').post( (req, res) => {
 })
 
 gameRoutes.route('/update/:id').post( (req, res) => {
-    console.log("UPDATE:", req.body)
+    // console.log("UPDATE:", req.body.history[0].gameState[0].players)
     Game.findById(req.params.id, (err, game) => {
         if (err) {
             res.status(404).json(err)
         } else {
-            console.log('GAME: ', game)
+            // console.log('GAME: ', game)
             game.players = req.body.players
             game.scores = req.body.scores
+            game.history = req.body.history
             // console.log('GAME after req.body: ', game)
             game.save()
                 .then( g => {
@@ -80,6 +81,16 @@ gameRoutes.route('/update/:id').post( (req, res) => {
 
 app.use('/games', gameRoutes)
 
-app.listen(PORT, function() {
-    console.log(`Listening on ${PORT}`)
-})
+const fs = require('fs')
+const https = require('https')
+var privateKey = fs.readFileSync( '/etc/letsencrypt/live/mihaiv.info/privkey.pem' );
+var certificate = fs.readFileSync( '/etc/letsencrypt/live/mihaiv.info/fullchain.pem' );
+
+// app.listen(PORT, function() {
+//     console.log(`Listening on ${PORT}`)
+// })
+
+https.createServer({
+    key: privateKey,
+    cert: certificate
+}, app).listen(PORT);

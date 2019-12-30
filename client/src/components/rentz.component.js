@@ -6,6 +6,9 @@ class RentzGame {
             s += i * 100
         }
         let i = 0;
+        let rombs = -40 * players.length
+        let totalsMinus = -100 -100 +rombs -80
+        console.log(players.length)
         this.gameState = (
             ["King", "queens", "rombs", "hands", "tplus", "tminus", "rents"].map( g => {
                 return {
@@ -13,7 +16,7 @@ class RentzGame {
                     players: [
                         players.map(p => {
                             i++
-                            return { id: i, done: false, }
+                            return { id: i, done: 0, }
                         })                   
                     ]
                 }
@@ -24,10 +27,10 @@ class RentzGame {
             "select": "---",
             "King": -100, 
             "queens": -100,
-            "rombs": -120,
+            "rombs": rombs,
             "hands": -80, 
-            "tplus": 400,
-            "tminus": -400,
+            "tplus": -totalsMinus,
+            "tminus": totalsMinus,
             "rents": s
         }
     }

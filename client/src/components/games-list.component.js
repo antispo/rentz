@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 
 import axios from 'axios'
 
+import API_URL from './api'
+
 export default class GamesList extends React.Component {
     constructor(props) {
         super(props)
@@ -11,9 +13,9 @@ export default class GamesList extends React.Component {
         }
     }
     componentDidMount = () => {
-        axios.get('http://localhost:3002/games/')
+        axios.get(API_URL + '/games/')
             .then( res => {
-                console.log(res.data)
+                // console.log(res.data)
                 this.setState( {games: res.data } )
             })
     }
