@@ -18,8 +18,10 @@ export default class Game extends React.Component {
             sindex: 0,
             currentGame: undefined,
             currentTotalPoints: 0,
+            totalePoints: 0,
             loaded: false,
         }
+        this.updateFormRef = React.createRef()
     }
     componentDidMount = () => {
         axios.get(API_URL + '/games/' + this.state._id)
@@ -54,6 +56,7 @@ export default class Game extends React.Component {
                             // console.log(pp)
                             prevState.currentGame = gs.name
                             prevState.currentTotalPoints = lastEntry.scoreBar[gs.name]
+                            prevState.totalPoints = lastEntry.scoreBar[gs.name]
                             
                             //TODO: change it to 0 or 1
                             // console.log("pp.done", pp.done)
@@ -112,7 +115,7 @@ export default class Game extends React.Component {
     }
     saveGame = () => {
         let game = {...this.state}
-        console.log('saveGame', game.history)
+        // console.log('saveGame', game.history)
         axios.post(API_URL + '/games/update/' + game._id, game)
             .then( res => {
                 // console.log(res)
@@ -121,6 +124,31 @@ export default class Game extends React.Component {
                 // console.log(err)
             })
     }
+    handleScoreChangeV2 = () => {
+        // console.log(this.updateFormRef.current['d'])
+        let sum = 0
+        this.state.players.forEach( p => {
+            // console.log(this.updateFormRef.current[p.name].value)
+            let x = parseInt(this.updateFormRef.current[p.name].value)
+            sum += (isNaN(x)) ? 0 : x
+        })
+        // console.log("V2: ", sum)
+        this.setState( { currentTotalPoints: this.state.totalPoints - sum})
+    }
+
+    isCurrentScoreReadyForUpdate = (e) => {
+        let sum = 0
+        this.state.players.forEach( p => {
+            let x = parseInt(e.target[p.name].value)
+            sum += (isNaN(x)) ? 0 : x
+        })
+        // console.log(this.state.totalPoints, this.state.currentTotalPoints, sum)
+        if ( this.state.currentTotalPoints !== 0 ) {
+            return false
+        }
+        return true
+    }
+
     render() {
         if (this.state.loaded === false) {
             return <div>Loading...</div>
@@ -167,7 +195,7 @@ export default class Game extends React.Component {
                                                 // console.log(pp.done)
                                                 return (
                                                     <td key={kk} className="">
-                                                        <input 
+                                                        <input name={pp.name}
                                                             type="checkbox" 
                                                             checked={pp.done === 1} 
                                                             onChange={ () => {
@@ -195,9 +223,23 @@ export default class Game extends React.Component {
                 
                 
                 
-                <form onSubmit={ e => {
+                <form
+                    ref={this.updateFormRef}
+                     onSubmit={ e => {
                     e.preventDefault()
                     // e.persist()
+                    if ( this.state.currentGame === undefined ) {
+                        alert("Please select a game");
+                        return
+                    }
+
+                    // TODO: add this after the calcs are correct
+                    // if ( this.state.currentTotalPoints)
+                    if (this.isCurrentScoreReadyForUpdate(e) === false) {
+                        alert('not all points were allocated')
+                        return
+                    }
+
 
                     const gameScores = []
 
@@ -266,7 +308,12 @@ export default class Game extends React.Component {
                                 {this.state.players.map( (p, k) => {
                                     return (
                                         <td key={k}>
-                                            <input defaultValue="" name={p.name} onBlur={this.handleScoreChange} />
+                                            <input 
+                                                defaultValue=""
+                                                name={p.name}
+                                                // onBlur={this.handleScoreChange}
+                                                onBlur={this.handleScoreChangeV2}
+                                            />
                                         </td>
                                     )
                                 })}

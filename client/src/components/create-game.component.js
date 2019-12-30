@@ -41,12 +41,14 @@ export default class CreateGame extends React.Component {
             history: [new RentzGame(this.state.players)]
         }
 
+
         axios.post(API_URL + '/games/add', newGame)
             .then( res => {
-                console.log(res.data._id)
+                // console.log(res.data._id)
+                this.props.history.push('/game/' + res.data._id)
             })
 
-        this.setState({timestamp: new Date(), players: []})
+        // this.setState({timestamp: new Date(), players: []})
     }
     render() {
         return (
