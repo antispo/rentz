@@ -100,6 +100,8 @@ export default class Game extends React.Component {
                 })
             })
             return prevState
+        }, () => {
+            this.saveGame()
         })
     }
     handleScoreChange = (e) => {
@@ -137,11 +139,11 @@ export default class Game extends React.Component {
     }
 
     isCurrentScoreReadyForUpdate = (e) => {
-        let sum = 0
-        this.state.players.forEach( p => {
-            let x = parseInt(e.target[p.name].value)
-            sum += (isNaN(x)) ? 0 : x
-        })
+        // let sum = 0
+        // this.state.players.forEach( p => {
+        //     let x = parseInt(e.target[p.name].value)
+        //     sum += (isNaN(x)) ? 0 : x
+        // })
         // console.log(this.state.totalPoints, this.state.currentTotalPoints, sum)
         if ( this.state.currentTotalPoints !== 0 ) {
             return false
@@ -173,7 +175,7 @@ export default class Game extends React.Component {
                         </span>
                     </h3>
                 </div>
-                <table className="table table-striped text-center table-dark">
+                <table className="table table-striped text-center table-dark table-sm table-hover">
                     <thead className="text-center table-primary">
                         <tr>
                             <th></th>
@@ -187,7 +189,7 @@ export default class Game extends React.Component {
                             // console.log(g)
                             return (
                                 <tr key={k}>
-                                    <td>{g.name}</td>
+                                    <th>{g.name}</th>
                                     { g.players.map( (p) => {
                                         // console.log(p)
                                         return (
@@ -257,7 +259,7 @@ export default class Game extends React.Component {
 
                     this.updateScores(gameScores)
                 }}>
-                    <table className="table-striped text-center">
+                    <table className="table-striped text-center table-hover">
                         <thead className="table-primary">
                             <tr className="table-primary">
                                 <th scope="col"></th>
@@ -273,38 +275,16 @@ export default class Game extends React.Component {
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Totals: </td>
-                                {this.state.players.map( (p,k) =>{
-                                    return (
-                                        <th key={k}>
-                                            {p.score}
-                                        </th>
-                                    )
-                                })}
-                                {/* <th></th> */}
-                            </tr>
-                                {this.state.scores.map( (s, k) => {
-                                    // console.log(s)
-                                    return (
-                                        <tr key={k}>
-                                            <td>{s[0].gameName}</td>
-                                            {s[0].gameScores.map( (ss, kk) => {
-                                                // console.log(ss)
-                                                return (
-                                                    <td key={kk}>{ss.value}</td>
-                                                )
-                                            })}
-                                        </tr>
-                                    )
-                                })}
-                            
-                            <tr>
-                                <td>
-                                    { ( this.state.currentGame !== undefined) 
-                                        && this.state.currentGame + " " + this.state.currentTotalPoints }
-                                    { ( this.state.currentGame === undefined) 
-                                        && ("Select game") }
-                                </td>
+                                { ( this.state.currentGame === undefined) &&
+                                    <td>Select game</td>
+                                } 
+                                { ( this.state.currentGame !== undefined) &&
+                                    <td>
+                                        <span>{this.state.currentGame}</span>
+                                        {" "}
+                                        <span>{this.state.currentTotalPoints}</span>
+                                    </td>
+                                }
                                 {this.state.players.map( (p, k) => {
                                     return (
                                         <td key={k}>
@@ -321,10 +301,38 @@ export default class Game extends React.Component {
                                     <button className={"btn btn-primary"} type="submit">Update</button>
                                 </td>
                             </tr>
+
+                            <tr className="table-warning text-dark">
+                                <th>Totals: </th>
+                                {this.state.players.map( (p,k) =>{
+                                    return (
+                                        <th key={k}>
+                                            {p.score}
+                                        </th>
+                                    )
+                                })}
+                                {/* <th></th> */}
+                            </tr>
+
+                                {this.state.scores.map( (s, k) => {
+                                    // console.log(s)
+                                    return (
+                                        <tr key={k}>
+                                            <td>{s[0].gameName}</td>
+                                            {s[0].gameScores.map( (ss, kk) => {
+                                                // console.log(ss)
+                                                return (
+                                                    <td key={kk}>{ss.value}</td>
+                                                )
+                                            })}
+                                        </tr>
+                                    )
+                                })}
+                            
                         </tbody>
                     </table>
                 </form>
-                <button className="btn btn-primary" onClick={this.saveGame}>Save Game</button>
+                {/* <button className="btn btn-primary" onClick={this.saveGame}>Save Game</button> */}
             </div>
         )
     }

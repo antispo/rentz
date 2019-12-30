@@ -10,7 +10,7 @@ class RentzGame {
         let totalsMinus = -100 -100 +rombs -80
         console.log(players.length)
         this.gameState = (
-            ["Dame", "Romburi", "Popa", "Decar", "Levate", "Whist", "Totale +", "Totale -", "Rentz"].map( g => {
+            ["Dame", "Romburi", "Popa", "Decar", "Levate", "Whist", "Totale+", "Totale-", "Rentz"].map( g => {
                 return {
                     name: g,
                     players: [
@@ -31,8 +31,8 @@ class RentzGame {
             "Decar": 100, 
             "Levate": -80,
             "Whist": 80, 
-            "Totale +": -totalsMinus,
-            "Totale -": totalsMinus,
+            "Totale+": -totalsMinus,
+            "Totale-": totalsMinus,
             "Rentz": s
         }
     }

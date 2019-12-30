@@ -57,30 +57,42 @@ export default class CreateGame extends React.Component {
                     <div className="form-group">
                         <label>Date & Time: </label>
                         <br />
-                        <DateTimePicker onChange={this.onChangeGameTimestamp} value={this.state.timestamp} />
+                        <div className="table-light mw-20">
+                            <DateTimePicker onChange={this.onChangeGameTimestamp} value={this.state.timestamp} />
+                        </div>
                         <br />
                         <div>
                             Players:
                             {this.state.players.length !== 0 && 
                                 this.state.players.map( (p,k) => {
                                     return (
-                                        <div key={k}>{p.name}</div>
+                                        <div key={k}>
+                                            <label className="form-control">
+                                                {p.name}
+                                            </label>
+                                        </div>
                                     )
                                 })
                             }
                         </div>
-                        <input type="text" name="player" ref={this.myRef}
-                            // className="form-control"
-                            value={this.state.currentPlayer} 
-                            onChange={this.handleNewPlayer} />
-                        <button className="btn btn-secondary" onClick={ e => {
-                            this.addPlayer()
-                            console.log(this.myRef)
-                            this.myRef.current.focus()
-                        }}>Add</button>
+                        <div className="row">
+                            <div className="col-8">
+                                <input witdh={5} cols={5} type="text" name="player" ref={this.myRef}
+                                    className="form-control"
+                                    value={this.state.currentPlayer} 
+                                    onChange={this.handleNewPlayer} />
+                            </div>
+                            <div className="col-4">
+                                <button className="btn btn-secondary btn-block" onClick={ e => {
+                                    this.addPlayer()
+                                    console.log(this.myRef)
+                                    this.myRef.current.focus()
+                                }}>Add</button>
+                            </div>
+                        </div>
                         <br />
                         <button
-                            className="btn btn-primary btn-inline"
+                            className="btn btn-primary btn-block"
                             type="submit"
                             onClick={this.onSubmit}
                         >

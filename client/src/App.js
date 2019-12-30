@@ -23,7 +23,7 @@ function App() {
             <img src={logo} width="30" height="30" alt="Rentz Games" />
           </a>
           <Link to="/" className="navbar-brand">Rentz</Link>
-          <div className="collapse navbar-collapse">
+          <div className="">
             <ul className="navbar-nav mr-auto">
               <li className="navbar-item">
                 <Link to="/" className="nav-link">Games</Link>
@@ -39,6 +39,13 @@ function App() {
         <Route path="/edit/:id" exact component={EditGame} />
         <Route path="/create" exact component={CreateGame} />
         <Route path="/game/:id" exact component={Game} />
+
+        <br />
+        <footer className="mw-100">
+          <div className="text-center mw-100 text-info">
+            <h6>&copy; 2019 - 2020 <a target="_blank" href="https://mihaiv.info" rel="noopener noreferrer">mihaiv.info</a></h6>
+          </div>
+        </footer>
       </div>
     </Router>
   );

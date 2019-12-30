@@ -26,21 +26,33 @@ export default class GamesList extends React.Component {
                 <div className="list-group">
                     {this.state.games !== undefined && this.state.games.map( (g, k) => {
                         return (
-                            <div id={g._id} key={k} className="list-group-item list-group-item-action">
-                                {/* <a hrev={"" + g._id} >{g.timestamp}</a> */}
-                                <Link to={"/game/" + g._id} className="nav-link">
-                                    {(new Date(g.timestamp).toLocaleString())}
-                                </Link>
-                                <div className="row">
-                                    {g.players.map( (player, key) => {
-                                        return (
-                                            <div className="col-1" key={key}>
-                                                {player.name} 
-                                            </div>
-                                        )
-                                    })}
+                            <Link to={"/game/" + g._id} className="nav-link" key={k}>
+                                <div id={g._id} className="list-group-item list-group-item-action">
+                                    {/* <a hrev={"" + g._id} >{g.timestamp}</a> */}
+                                   <div className="row">
+                                       <div className="col-6">
+                                            <h3>
+                                                {(new Date(g.timestamp).toLocaleString())}
+                                            </h3>
+                                       </div>
+                                       <div className="col-6 text-right">
+                                           {g._id}
+                                       </div>
+                                   </div>
+                                    <div className="row text-center text-info">
+                                        {g.players.map( (player, k) => {
+                                            return (
+                                                <div
+                                                    className="col-2" 
+                                                    key={k}
+                                                >
+                                                    {player.name}: {player.score}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
                                 </div>
-                            </div>
+                            </Link>
                         )
                     })}
                 </div>
