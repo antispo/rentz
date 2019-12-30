@@ -7,7 +7,8 @@ class RentzGame {
         }
         let i = 0;
         let rombs = -40 * players.length
-        let totalsMinus = -100 -100 +rombs -80
+        // king queens rombs hands & decar :D
+        let totalsMinus = -100 -100 -100 +rombs -80
         console.log(players.length)
         this.gameState = (
             ["Dame", "Romburi", "Popa", "Decar", "Levate", "Whist", "Totale+", "Totale-", "Rentz"].map( g => {
