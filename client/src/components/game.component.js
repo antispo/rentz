@@ -48,7 +48,7 @@ export default class Game extends React.Component {
         // console.log(this.state.index)
         // console.log(this.state.currentGame)
         // console.log(this.getCurrentlyEnteredPoints())
-        if (this.state.currentGame !== undefined && this.getCurrentlyEnteredPoints() > 0) {
+        if (this.state.currentGame !== undefined && this.getCurrentlyEnteredPoints() !== 0) {
             alert('You have points entered!')
             return
         }
