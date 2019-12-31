@@ -16,15 +16,15 @@ import './App.css'
 function App() {
   return (
     <Router>
-      <div className="container">
+      <div className="container align-center w-75">
         
-        <nav className="navbar navbar-expand-lg  navbar-dark bg-primary">
+        <nav className="navbar navbar-expand align-center  navbar-dark bg-primary w-75">
           <a className="navbar-brand" href="http://mihaiv.info" target="_blank" rel="noopener noreferrer">
             <img src={logo} width="30" height="30" alt="Rentz Games" />
           </a>
-          <Link to="/" className="navbar-brand">Rentz</Link>
+          {/* <Link to="/" className="navbar-brand">Rentz</Link> */}
           <div className="">
-            <ul className="navbar-nav mr-auto">
+            <ul className="navbar-nav">
               <li className="navbar-item">
                 <Link to="/" className="nav-link">Games</Link>
               </li>
@@ -42,7 +42,7 @@ function App() {
 
         <br />
         <footer className="mw-100">
-          <div className="text-center mw-100 text-info">
+          <div className="text-center w-50 text-info">
             <h6>&copy; 2019 - 2020 <a target="_blank" href="https://mihaiv.info" rel="noopener noreferrer">mihaiv.info</a></h6>
           </div>
         </footer>

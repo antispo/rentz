@@ -172,61 +172,63 @@ export default class Game extends React.Component {
 
         return (
             
-            <div>
-                <div>
-                    <h3>
-                        Game {" "}
-                        <span className="text-info">
+            <div className="w-75">
+                <div className="w-50">
+                    <h5>
+                        {/* Game {" "}
+                        <span className="text-info sm">
                             {this.state._id}
                         </span>
-                        {" "} from {" "}
+                        {" "} from {" "} */}
                         <span className="text-info">
                             {(new Date(this.state.timestamp)).toLocaleString()}
                         </span>
-                    </h3>
+                    </h5>
                 </div>
-                <table className="table table-striped text-center table-dark table-sm table-hover">
-                    <thead className="text-center table-primary">
-                        <tr>
-                            <th></th>
-                            { gameState.players.map( (p, k) => {
-                                return <th key={k}>{p.name}</th>
+
+                <div className="w-50 align=center">
+                    <table className="table table-striped text-left table-dark table-sm table-hover">
+                        <thead className="table-primary">
+                            <tr>
+                                <th></th>
+                                { gameState.players.map( (p, k) => {
+                                    return <th className="" key={k}>{p.name}</th>
+                                })}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            { gameState.gameState.map( (g, k) => {
+                                // console.log(g)
+                                return (
+                                    <tr key={k}>
+                                        <th className="">{g.name}</th>
+                                        { g.players.map( (p) => {
+                                            // console.log(p)
+                                            return (
+                                                p.map( (pp, kk) => { 
+                                                    // console.log(pp.done)
+                                                    return (
+                                                        <td className="" key={kk}>
+                                                            <input name={pp.name}
+                                                                type="checkbox" 
+                                                                checked={pp.done === 1} 
+                                                                onChange={ () => {
+                                                                    this.hadleCheck(pp.id)
+                                                                }}
+                                                                className=""
+                                                            />
+                                                        </td>
+                                                    )
+                                                })
+                                            )
+                                        })
+                                        }
+                                    </tr>
+                                )
                             })}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        { gameState.gameState.map( (g, k) => {
-                            // console.log(g)
-                            return (
-                                <tr key={k}>
-                                    <th>{g.name}</th>
-                                    { g.players.map( (p) => {
-                                        // console.log(p)
-                                        return (
-                                            p.map( (pp, kk) => { 
-                                                // console.log(pp.done)
-                                                return (
-                                                    <td key={kk} className="">
-                                                        <input name={pp.name}
-                                                            type="checkbox" 
-                                                            checked={pp.done === 1} 
-                                                            onChange={ () => {
-                                                                this.hadleCheck(pp.id)
-                                                            }}
-                                                            className=""
-                                                        />
-                                                    </td>
-                                                )
-                                            })
-                                        )
-                                    })
-                                    }
-                                </tr>
-                            )
-                        })}
-                    </tbody>
-                </table>
-                
+                        </tbody>
+                    </table>
+                </div>                
                 
                 
                 <div>
