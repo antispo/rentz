@@ -46,6 +46,12 @@ export default class Game extends React.Component {
     }
     hadleCheck = (id) => {
         // console.log(this.state.index)
+        // console.log(this.state.currentGame)
+        // console.log(this.getCurrentlyEnteredPoints())
+        if (this.state.currentGame !== undefined && this.getCurrentlyEnteredPoints() > 0) {
+            alert('You have points entered!')
+            return
+        }
         this.setState( prevState => {
             // const history = prevState.history
             const lastEntry = {...prevState.history[prevState.index]}
@@ -126,14 +132,18 @@ export default class Game extends React.Component {
                 // console.log(err)
             })
     }
-    handleScoreChangeV2 = () => {
-        // console.log(this.updateFormRef.current['d'])
+    getCurrentlyEnteredPoints() {
         let sum = 0
         this.state.players.forEach( p => {
             // console.log(this.updateFormRef.current[p.name].value)
             let x = parseInt(this.updateFormRef.current[p.name].value)
             sum += (isNaN(x)) ? 0 : x
         })
+        return sum
+    }
+    handleScoreChangeV2 = () => {
+        // console.log(this.updateFormRef.current['d'])
+        let sum = this.getCurrentlyEnteredPoints()
         // console.log("V2: ", sum)
         this.setState( { currentTotalPoints: this.state.totalPoints - sum})
     }
@@ -290,7 +300,6 @@ export default class Game extends React.Component {
                                         <td key={k}>
                                             <input
                                                 // type="number"
-                                                autoComplete=""
                                                 autoComplete="off"
                                                 name={p.name}
                                                 // onBlur={this.handleScoreChange}
