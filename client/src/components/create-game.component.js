@@ -52,7 +52,7 @@ export default class CreateGame extends React.Component {
     }
     render() {
         return (
-            <div>
+            <div className="w-75">
                 <h4>Create Game</h4>
                     <div className="form-group">
                         <label>Date & Time: </label>

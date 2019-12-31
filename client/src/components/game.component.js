@@ -173,7 +173,7 @@ export default class Game extends React.Component {
         return (
             
             <div className="w-75">
-                <div className="w-50">
+                <div className="">
                     <h5>
                         {/* Game {" "}
                         <span className="text-info sm">
@@ -231,9 +231,9 @@ export default class Game extends React.Component {
                 </div>                
                 
                 
-                <div>
+                {/* <div>
                     <h3>Scores</h3>
-                </div>
+                </div> */}
                 
                 
                 
