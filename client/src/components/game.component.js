@@ -298,13 +298,17 @@ export default class Game extends React.Component {
                                 {this.state.players.map( (p, k) => {
                                     return (
                                         <td key={k}>
-                                            <input
-                                                // type="number"
-                                                autoComplete="off"
-                                                name={p.name}
-                                                // onBlur={this.handleScoreChange}
-                                                onBlur={this.handleScoreChangeV2}
-                                            />
+                                            {/* <div className="mw-25 width: 15px"> */}
+                                                <input
+                                                    // type="number"
+                                                    autoComplete="off"
+                                                    name={p.name}
+                                                    // onBlur={this.handleScoreChange}
+                                                    onBlur={this.handleScoreChangeV2}
+                                                    maxLength={7}
+                                                    size={7}
+                                                />
+                                            {/* </div> */}
                                         </td>
                                     )
                                 })}
