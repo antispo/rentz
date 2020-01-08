@@ -46,7 +46,7 @@ export default class Game extends React.Component {
           loaded: true
         },
         () => {
-          console.log(this.state.history);
+          // console.log(this.state.history);
         }
       );
     });
@@ -78,6 +78,52 @@ export default class Game extends React.Component {
                 if (pp.done === 0) {
                   pp.done = 1;
                 } else if (pp.done === 1) {
+                  pp.done = 0;
+                }
+                // pp.done = !pp.done
+              }
+            });
+          });
+        });
+        prevState.history.push(lastEntry);
+
+        prevState.index++;
+        return prevState;
+      },
+      () => {
+        console.log('handleCheck: ', this.state.history);
+      }
+    );
+  };
+
+  hadleCheckV2 = id => {
+    this.setState({ currentPlayerName: id.name });
+    if (
+      this.state.currentGame !== undefined &&
+      this.getCurrentlyEnteredPoints() !== 0
+    ) {
+      alert('You have points entered!');
+      return;
+    }
+    this.setState(
+      prevState => {
+        // const history = prevState.history
+        const lastEntry = { ...prevState.history[prevState.index] };
+        // console.log(id);
+        lastEntry.gameState.forEach(gs => {
+          gs.players.forEach(p => {
+            // console.log(p);
+            p.forEach(pp => {
+              // console.log(pp);
+              if (id.id === pp.id) {
+                if (pp.done === 0) {
+                  prevState.currentGame = gs.name;
+                  prevState.currentTotalPoints = prevState.scoreBar[gs.name];
+                  prevState.totalPoints = prevState.scoreBar[gs.name];
+                  pp.done = 1;
+                } else if (pp.done === 1) {
+                  prevState.currentGame = undefined;
+                  prevState.currentPlayerName = undefined;
                   pp.done = 0;
                 }
                 // pp.done = !pp.done
@@ -198,7 +244,14 @@ export default class Game extends React.Component {
                   <th></th>
                   {this.state.players.map((p, k) => {
                     return (
-                      <th className="" key={k}>
+                      <th
+                        className={
+                          p.name === this.state.currentPlayerName
+                            ? 'text-warning'
+                            : ''
+                        }
+                        key={k}
+                      >
                         {p.name}
                       </th>
                     );
@@ -209,7 +262,15 @@ export default class Game extends React.Component {
                 {gameState.gameState.map((g, k) => {
                   return (
                     <tr key={k}>
-                      <th className="">{g.name}</th>
+                      <th
+                        className={
+                          g.name === this.state.currentGame
+                            ? 'text-warning'
+                            : ''
+                        }
+                      >
+                        {g.name}
+                      </th>
                       {g.players.map(p => {
                         return p.map((pp, kk) => {
                           return (
@@ -219,7 +280,7 @@ export default class Game extends React.Component {
                                 type="checkbox"
                                 checked={pp.done === 1}
                                 onChange={() => {
-                                  this.hadleCheck(pp.id);
+                                  this.hadleCheckV2(pp);
                                 }}
                                 className=""
                               />
@@ -234,9 +295,14 @@ export default class Game extends React.Component {
             </table>
           </div>
 
-          {/* <div>
-                    <h3>Scores</h3>
-                </div> */}
+          <div>
+            <h5>
+              {this.state.currentGame !== undefined &&
+              this.state.currentPlayerName !== undefined
+                ? `${this.state.currentGame} | ${this.state.currentPlayerName}`
+                : `Select a game`}
+            </h5>
+          </div>
 
           <form
             ref={this.updateFormRef}
@@ -288,7 +354,7 @@ export default class Game extends React.Component {
                   {this.state.currentGame === undefined && <td>Select game</td>}
                   {this.state.currentGame !== undefined && (
                     <td>
-                      <span>{this.state.currentGame}</span>{' '}
+                      {/* <span>{this.state.currentGame}</span>{' '} */}
                       <span>{this.state.currentTotalPoints}</span>
                     </td>
                   )}

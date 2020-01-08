@@ -17,7 +17,7 @@ class RentzGame {
         players: [
           players.map(p => {
             i++;
-            return { id: i, done: 0 };
+            return { id: i, done: 0, name: p.name };
           })
         ]
       };
