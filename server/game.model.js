@@ -8,7 +8,8 @@ let Game = Schema({
   },
   players: [],
   history: [],
-  scores: []
+  scores: [],
+  scoreBar: 0
 });
 
 module.exports = mongoose.model('Game', Game);

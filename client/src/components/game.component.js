@@ -19,37 +19,40 @@ export default class Game extends React.Component {
       currentGame: undefined,
       currentTotalPoints: 0,
       totalePoints: 0,
-      loaded: false
+      loaded: false,
+      error: null
     };
     this.updateFormRef = React.createRef();
   }
   componentDidMount = () => {
     axios.get(API_URL + '/games/' + this.state._id).then(res => {
-      // console.log(res.data)
+      // console.log(res.data);
+      if (res.data === null) {
+        this.setState({ error: 404, loaded: true });
+        return;
+      }
       this.setState(
-        prevState => {
-          prevState._id = res.data._id;
-          prevState.timestamp = res.data.timestamp;
-          prevState.players = res.data.players;
-          prevState.scores = res.data.scores;
-          // prevState.players = players
-          // console.log("res.data.players", res.data.players)
-          prevState.history = res.data.history;
-          prevState.index = res.data.history.length - 1;
-          // prevState.history.push(new RentzGame(res.data.players))
-          prevState.loaded = true;
-          return prevState;
+        {
+          _id: res.data._id,
+          timestamp: res.data.timestamp,
+          players: res.data.players,
+          scores: res.data.scores,
+
+          history: res.data.history,
+          index: res.data.history.length - 1,
+
+          scoreBar: res.data.scoreBar,
+
+          loaded: true
         },
         () => {
-          // console.log(this.state)
+          console.log(this.state.history);
         }
       );
     });
   };
+
   hadleCheck = id => {
-    // console.log(this.state.index)
-    // console.log(this.state.currentGame)
-    // console.log(this.getCurrentlyEnteredPoints())
     if (
       this.state.currentGame !== undefined &&
       this.getCurrentlyEnteredPoints() !== 0
@@ -61,38 +64,38 @@ export default class Game extends React.Component {
       prevState => {
         // const history = prevState.history
         const lastEntry = { ...prevState.history[prevState.index] };
+        // console.log(id);
         lastEntry.gameState.forEach(gs => {
           gs.players.forEach(p => {
+            // console.log(p);
             p.forEach(pp => {
+              // console.log(pp);
               if (id === pp.id) {
-                // console.log(pp)
                 prevState.currentGame = gs.name;
-                prevState.currentTotalPoints = lastEntry.scoreBar[gs.name];
-                prevState.totalPoints = lastEntry.scoreBar[gs.name];
+                prevState.currentTotalPoints = prevState.scoreBar[gs.name];
+                prevState.totalPoints = prevState.scoreBar[gs.name];
 
-                //TODO: change it to 0 or 1
-                // console.log("pp.done", pp.done)
                 if (pp.done === 0) {
                   pp.done = 1;
                 } else if (pp.done === 1) {
                   pp.done = 0;
                 }
                 // pp.done = !pp.done
-                // console.log("pp.done", pp.done)
               }
             });
           });
         });
         prevState.history.push(lastEntry);
-        // console.log(lastEntry)
+
         prevState.index++;
         return prevState;
       },
       () => {
-        // console.log(this.state.history)
+        console.log('handleCheck: ', this.state.history);
       }
     );
   };
+
   updateScores = gameScores => {
     const play = [{ gameName: this.state.currentGame, gameScores: gameScores }];
 
@@ -120,52 +123,44 @@ export default class Game extends React.Component {
       }
     );
   };
+
   handleScoreChange = e => {
     let value = parseInt(e.target.value);
     if (isNaN(value)) {
       value = 0;
     }
-    // console.log(value, this.state.currentTotalPoints)
+
     this.setState(prevState => {
       prevState.currentTotalPoints -= value;
       return prevState;
     });
   };
+
   saveGame = () => {
     let game = { ...this.state };
-    // console.log('saveGame', game.history)
-    axios
-      .post(API_URL + '/games/update/' + game._id, game)
-      .then(res => {
-        // console.log(res)
-      })
-      .catch(err => {
-        // console.log(err)
-      });
+
+    axios.post(API_URL + '/games/update/' + game._id, game).catch(err => {
+      console.error(err);
+    });
   };
-  getCurrentlyEnteredPoints() {
+
+  getCurrentlyEnteredPoints = () => {
     let sum = 0;
     this.state.players.forEach(p => {
-      // console.log(this.updateFormRef.current[p.name].value)
       let x = parseInt(this.updateFormRef.current[p.name].value);
       sum += isNaN(x) ? 0 : x;
     });
     return sum;
-  }
+  };
+
   handleScoreChangeV2 = () => {
-    // console.log(this.updateFormRef.current['d'])
-    let sum = this.getCurrentlyEnteredPoints();
-    // console.log("V2: ", sum)
-    this.setState({ currentTotalPoints: this.state.totalPoints - sum });
+    this.setState({
+      currentTotalPoints:
+        this.state.totalPoints - this.getCurrentlyEnteredPoints()
+    });
   };
 
   isCurrentScoreReadyForUpdate = e => {
-    // let sum = 0
-    // this.state.players.forEach( p => {
-    //     let x = parseInt(e.target[p.name].value)
-    //     sum += (isNaN(x)) ? 0 : x
-    // })
-    // console.log(this.state.totalPoints, this.state.currentTotalPoints, sum)
     if (this.state.currentTotalPoints !== 0) {
       return false;
     }
@@ -175,11 +170,11 @@ export default class Game extends React.Component {
   render() {
     if (this.state.loaded === false) {
       return <div>Loading...</div>;
+    } else if (this.state.error !== null) {
+      return <div>Error: {this.state.error}</div>;
     } else {
-      // console.log(this.state.history, this.state.index)
+      // console.log(this.state.index, this.state.history);
       const gameState = this.state.history[this.state.index];
-
-      // console.log("gameState", gameState)
 
       return (
         <div className="w-75">
@@ -201,7 +196,7 @@ export default class Game extends React.Component {
               <thead className="table-primary">
                 <tr>
                   <th></th>
-                  {gameState.players.map((p, k) => {
+                  {this.state.players.map((p, k) => {
                     return (
                       <th className="" key={k}>
                         {p.name}
@@ -212,14 +207,11 @@ export default class Game extends React.Component {
               </thead>
               <tbody>
                 {gameState.gameState.map((g, k) => {
-                  // console.log(g)
                   return (
                     <tr key={k}>
                       <th className="">{g.name}</th>
                       {g.players.map(p => {
-                        // console.log(p)
                         return p.map((pp, kk) => {
-                          // console.log(pp.done)
                           return (
                             <td className="" key={kk}>
                               <input
@@ -265,11 +257,9 @@ export default class Game extends React.Component {
 
               const gameScores = [];
 
-              // console.log(e.target)
               this.state.players.forEach(p => {
-                // console.log("WTF ---------", p.name, e.target[54564645])
                 let enteredScore = parseInt(e.target[p.name].value);
-                // console.log(enteredScore)
+
                 if (isNaN(enteredScore)) {
                   enteredScore = 0;
                 }
@@ -285,7 +275,6 @@ export default class Game extends React.Component {
                 <tr className="table-primary">
                   <th scope="col"></th>
                   {this.state.players.map((p, k) => {
-                    // console.log(p)
                     return (
                       <th scope="col" key={k}>
                         {p.name}
@@ -336,12 +325,10 @@ export default class Game extends React.Component {
                 </tr>
 
                 {this.state.scores.map((s, k) => {
-                  // console.log(s)
                   return (
                     <tr key={k}>
                       <td>{s[0].gameName}</td>
                       {s[0].gameScores.map((ss, kk) => {
-                        // console.log(ss)
                         return <td key={kk}>{ss.value}</td>;
                       })}
                     </tr>

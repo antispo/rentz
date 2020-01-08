@@ -4,11 +4,12 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
+const env = require('dotenv');
+env.config();
+
 const gameRoutes = express.Router();
 
 const PORT = 37302;
-
-let Game = require('./game.model');
 
 const app = express();
 
@@ -21,14 +22,16 @@ mongoose.connect('mongodb://127.0.0.1:27017/games', {
 });
 const connection = mongoose.connection;
 
-connection.once('open', function() {
-  console.log('Connect to mongo: OK');
+connection.once('open', () => {
+  console.info('Connect to mongo: OK');
 });
 
-gameRoutes.route('/').get(function(req, res) {
-  Game.find(function(err, games) {
+let Game = require('./game.model');
+
+gameRoutes.route('/').get((req, res) => {
+  Game.find((err, games) => {
     if (err) {
-      console.log(err);
+      console.error(err);
     } else {
       res.json(games);
     }
@@ -37,11 +40,12 @@ gameRoutes.route('/').get(function(req, res) {
 
 gameRoutes.route('/:id').get((req, res) => {
   let id = req.params.id;
-  // console.log(id)
+
   Game.findById(id, (err, game) => {
     if (err) {
-      console.log(err);
+      console.error(err);
     } else {
+      // console.log(game);
       res.json(game);
     }
   });
@@ -49,7 +53,7 @@ gameRoutes.route('/:id').get((req, res) => {
 
 gameRoutes.route('/add').post((req, res) => {
   let game = new Game(req.body);
-  // console.log("/add: ", game)
+
   game
     .save()
     .then(g => {
@@ -60,17 +64,26 @@ gameRoutes.route('/add').post((req, res) => {
     });
 });
 
+gameRoutes.route('/delete/:id').get((req, res) => {
+  Game.findByIdAndDelete(req.params.id)
+    .then(response => {
+      res.json(response);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json(err);
+    });
+});
+
 gameRoutes.route('/update/:id').post((req, res) => {
-  // console.log("UPDATE:", req.body.history[0].gameState[0].players)
   Game.findById(req.params.id, (err, game) => {
     if (err) {
       res.status(404).json(err);
     } else {
-      // console.log('GAME: ', game)
       game.players = req.body.players;
       game.scores = req.body.scores;
       game.history = req.body.history;
-      // console.log('GAME after req.body: ', game)
+
       game
         .save()
         .then(g => {
@@ -85,25 +98,28 @@ gameRoutes.route('/update/:id').post((req, res) => {
 
 app.use('/games', gameRoutes);
 
-const fs = require('fs');
-const https = require('https');
-var privateKey = fs.readFileSync(
-  '/etc/letsencrypt/live/mihaiv.info/privkey.pem'
-);
-var certificate = fs.readFileSync(
-  '/etc/letsencrypt/live/mihaiv.info/fullchain.pem'
-);
+if (process.env.ENV === 'dev') {
+  app.listen(PORT, function() {
+    console.log(`Listening on ${PORT}`);
+  });
+} else if (process.env.ENV == 'prod') {
+  const fs = require('fs');
+  const https = require('https');
 
-// app.listen(PORT, function() {
-//     console.log(`Listening on ${PORT}`)
-// })
+  var privateKey = fs.readFileSync(
+    '/etc/letsencrypt/live/mihaiv.info/privkey.pem'
+  );
+  var certificate = fs.readFileSync(
+    '/etc/letsencrypt/live/mihaiv.info/fullchain.pem'
+  );
 
-https
-  .createServer(
-    {
-      key: privateKey,
-      cert: certificate
-    },
-    app
-  )
-  .listen(PORT);
+  https
+    .createServer(
+      {
+        key: privateKey,
+        cert: certificate
+      },
+      app
+    )
+    .listen(PORT);
+}

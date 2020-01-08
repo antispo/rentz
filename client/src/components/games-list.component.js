@@ -14,7 +14,6 @@ export default class GamesList extends React.Component {
   }
   componentDidMount = () => {
     axios.get(API_URL + '/games/').then(res => {
-      // console.log(res.data)
       this.setState({ games: res.data });
     });
   };
