@@ -108,9 +108,9 @@ export default class Game extends React.Component {
     this.setState(
       prevState => {
         // const history = prevState.history
-        const lastEntry = { ...prevState.history[prevState.index] };
+        const lastEntry = prevState.history[prevState.index];
         // console.log(id);
-        lastEntry.gameState.forEach(gs => {
+        lastEntry.forEach(gs => {
           gs.players.forEach(p => {
             // console.log(p);
             p.forEach(pp => {
@@ -259,7 +259,7 @@ export default class Game extends React.Component {
                 </tr>
               </thead>
               <tbody>
-                {gameState.gameState.map((g, k) => {
+                {gameState.map((g, k) => {
                   return (
                     <tr key={k}>
                       <th
