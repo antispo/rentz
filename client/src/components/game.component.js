@@ -6,6 +6,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import { FormControlLabel, Typography } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid';
 
 // import red from '@material-ui/core/colors/red';
 
@@ -148,7 +149,13 @@ export default class Game extends React.Component {
   };
 
   updateScores = gameScores => {
-    const play = [{ gameName: this.state.currentGame, gameScores: gameScores }];
+    const play = [
+      {
+        gameName: this.state.currentGame,
+        gameScores: gameScores,
+        player: this.state.currentPlayerName
+      }
+    ];
 
     this.setState(
       prevState => {
@@ -172,6 +179,7 @@ export default class Game extends React.Component {
       },
       () => {
         this.saveGame();
+        // console.log(this.state.scores);
       }
     );
   };
@@ -230,7 +238,7 @@ export default class Game extends React.Component {
 
       return (
         <div className="w-75">
-          <div className="">
+          <div className="" style={{ marginTop: 5 }}>
             <h5>
               {/* Game {" "}
                         <span className="text-info sm">
@@ -306,6 +314,7 @@ export default class Game extends React.Component {
                                 }
                                 label={
                                   <Typography
+                                    variant="caption"
                                     className={pp.done ? 'gameIsDone' : ''}
                                   >
                                     {g.name}
@@ -421,7 +430,12 @@ export default class Game extends React.Component {
                 {this.state.scores.map((s, k) => {
                   return (
                     <tr key={k}>
-                      <td>{s[0].gameName}</td>
+                      <td>
+                        <Grid container justify="space-around" spacing={1}>
+                          <Grid item>{s[0].gameName}</Grid>
+                          <Grid item>{s[0].player}</Grid>
+                        </Grid>
+                      </td>
                       {s[0].gameScores.map((ss, kk) => {
                         return <td key={kk}>{ss.value}</td>;
                       })}
