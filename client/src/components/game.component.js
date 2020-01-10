@@ -1,8 +1,13 @@
 import React from 'react';
-
 import axios from 'axios';
-
 import API_URL from './api';
+
+import Checkbox from '@material-ui/core/Checkbox';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import { FormControlLabel, Typography } from '@material-ui/core';
+
+// import red from '@material-ui/core/colors/red';
 
 export default class Game extends React.Component {
   constructor(props) {
@@ -242,7 +247,7 @@ export default class Game extends React.Component {
             <table className="table table-striped text-left table-dark table-sm table-hover">
               <thead className="table-primary">
                 <tr>
-                  <th></th>
+                  {/* <th></th> */}
                   {this.state.players.map((p, k) => {
                     return (
                       <th
@@ -263,7 +268,7 @@ export default class Game extends React.Component {
                 {gameState.map((g, k) => {
                   return (
                     <tr key={k}>
-                      <th
+                      {/* <th
                         className={
                           g.name === this.state.currentGame
                             ? 'text-warning'
@@ -271,19 +276,41 @@ export default class Game extends React.Component {
                         }
                       >
                         {g.name}
-                      </th>
+                      </th> */}
                       {g.players.map(p => {
                         return p.map((pp, kk) => {
                           return (
                             <td className="" key={kk}>
-                              <input
-                                name={pp.name}
-                                type="checkbox"
-                                checked={pp.done === 1}
-                                onChange={() => {
-                                  this.hadleCheckV2(pp);
-                                }}
-                                className=""
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={pp.done === 1}
+                                    onChange={() => {
+                                      this.hadleCheckV2(pp);
+                                    }}
+                                    value={g.name}
+                                    icon={
+                                      <CheckBoxOutlineBlankIcon
+                                        fontSize="small"
+                                        // color="primary"
+                                        style={{ color: '999' }}
+                                      />
+                                    }
+                                    checkedIcon={
+                                      <CheckBoxIcon
+                                        fontSize="small"
+                                        color="primary"
+                                      />
+                                    }
+                                  />
+                                }
+                                label={
+                                  <Typography
+                                    className={pp.done ? 'gameIsDone' : ''}
+                                  >
+                                    {g.name}
+                                  </Typography>
+                                }
                               />
                             </td>
                           );
@@ -352,7 +379,7 @@ export default class Game extends React.Component {
               </thead>
               <tbody>
                 <tr>
-                  {this.state.currentGame === undefined && <td>Select game</td>}
+                  {this.state.currentGame === undefined && <td>Select</td>}
                   {this.state.currentGame !== undefined && (
                     <td>
                       {/* <span>{this.state.currentGame}</span>{' '} */}
