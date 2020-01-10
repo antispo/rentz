@@ -1,11 +1,17 @@
 import React from 'react';
 import DateTimePicker from 'react-datetime-picker';
-
 import axios from 'axios';
-
 import { createRentzGame } from './rentz.component';
-
 import API_URL from './api';
+
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
+import IconButton from '@material-ui/core/IconButton';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 export default class CreateGame extends React.Component {
   constructor(props) {
@@ -66,10 +72,20 @@ export default class CreateGame extends React.Component {
 
     // this.setState({timestamp: new Date(), players: []})
   };
+
+  removePlayer = name => {
+    const newPlayers = this.state.players.filter(p => {
+      return p.name !== name;
+    });
+    this.setState({ players: newPlayers });
+  };
+
   render() {
     return (
-      <div className="w-75">
-        <h4>Create Game</h4>
+      <div className="w-50">
+        <Typography variant="h4" style={{ marginTop: 10, marginBottom: 10 }}>
+          Create Game
+        </Typography>
         <div className="form-group">
           <label>Date & Time: </label>
           <br />
@@ -80,22 +96,9 @@ export default class CreateGame extends React.Component {
             />
           </div>
           <br />
-          <div>
-            Players:
-            {this.state.players.length !== 0 &&
-              this.state.players.map((p, k) => {
-                return (
-                  <div key={k}>
-                    <label className="form-control">{p.name}</label>
-                  </div>
-                );
-              })}
-          </div>
           <div className="row">
             <div className="col-8">
               <input
-                witdh={5}
-                cols={5}
                 type="text"
                 name="player"
                 ref={this.myRef}
@@ -116,6 +119,42 @@ export default class CreateGame extends React.Component {
                 Add
               </button>
             </div>
+          </div>
+          <div>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <Typography
+                  variant="h6"
+                  className=""
+                  style={{ marginTop: 10, marginBottom: 10 }}
+                >
+                  Players
+                </Typography>
+                <div className="">
+                  <List dense={false}>
+                    {this.state.players.length !== 0 &&
+                      this.state.players.map((p, k) => {
+                        return (
+                          <ListItem key={k}>
+                            <ListItemText primary={p.name} />
+                            <ListItemSecondaryAction>
+                              <IconButton
+                                edge="end"
+                                aria-label="delete"
+                                onClick={e => {
+                                  this.removePlayer(p.name);
+                                }}
+                              >
+                                <DeleteIcon color="primary" />
+                              </IconButton>
+                            </ListItemSecondaryAction>
+                          </ListItem>
+                        );
+                      })}
+                  </List>
+                </div>
+              </Grid>
+            </Grid>
           </div>
           <br />
           <button

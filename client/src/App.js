@@ -5,7 +5,6 @@ import 'bootstrap/dist/css/dark-bootstrap.min.css';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 
 import GamesList from './components/games-list.component';
-import EditGame from './components/edit-game.component';
 import CreateGame from './components/create-game.component';
 import Game from './components/game.component';
 
@@ -44,7 +43,6 @@ function App() {
         </nav>
 
         <Route path="/" exact component={GamesList} />
-        <Route path="/edit/:id" exact component={EditGame} />
         <Route path="/create" exact component={CreateGame} />
         <Route path="/game/:id" exact component={Game} />
 

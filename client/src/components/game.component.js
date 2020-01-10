@@ -137,7 +137,7 @@ export default class Game extends React.Component {
         return prevState;
       },
       () => {
-        console.log('handleCheck: ', this.state.history);
+        // console.log('handleCheck: ', this.state.history);
       }
     );
   };
@@ -150,6 +150,7 @@ export default class Game extends React.Component {
         prevState.scores.push(play);
         prevState.sindex++;
         prevState.currentGame = undefined;
+        prevState.currentPlayerName = undefined;
         prevState.players.forEach(p => {
           p.score = 0;
         });
@@ -376,7 +377,7 @@ export default class Game extends React.Component {
                     );
                   })}
                   <td>
-                    <button className={'btn btn-primary'} type="submit">
+                    <button className={'btn btn-primary btn-sm'} type="submit">
                       Update
                     </button>
                   </td>
