@@ -5,6 +5,9 @@ import axios from 'axios';
 
 import API_URL from './api';
 
+import Container from '@material-ui/core/Container';
+import Paper from '@material-ui/core/Paper';
+
 export default class GamesList extends React.Component {
   constructor(props) {
     super(props);
@@ -19,16 +22,17 @@ export default class GamesList extends React.Component {
   };
   render() {
     return (
-      <div className="w-75">
+      <Container maxWidth="sm">
         {/* <h4>Games List</h4> */}
         <div className="list-group">
           {this.state.games !== undefined &&
             this.state.games.map((g, k) => {
               return (
                 <Link to={'/game/' + g._id} className="nav-link" key={k}>
-                  <div
+                  <Paper
                     id={g._id}
-                    className="list-group-item list-group-item-action"
+                    style={{ padding: 5, margin: 5 }}
+                    elevation={3}
                   >
                     {/* <a hrev={"" + g._id} >{g.timestamp}</a> */}
                     <div className="row">
@@ -49,12 +53,12 @@ export default class GamesList extends React.Component {
                     <div className="col-12 text-right">
                       <small>{g._id}</small>
                     </div>
-                  </div>
+                  </Paper>
                 </Link>
               );
             })}
         </div>
-      </div>
+      </Container>
     );
   }
 }

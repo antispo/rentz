@@ -5,10 +5,19 @@ import API_URL from './api';
 import Checkbox from '@material-ui/core/Checkbox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import { FormControlLabel, Typography, Paper } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid';
-
-// import red from '@material-ui/core/colors/red';
+import {
+  FormControlLabel,
+  Typography,
+  Paper,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Button
+} from '@material-ui/core';
+import DoneOutlineTwoToneIcon from '@material-ui/icons/DoneOutlineTwoTone';
 
 export default class Game extends React.Component {
   constructor(props) {
@@ -237,7 +246,7 @@ export default class Game extends React.Component {
       const gameState = this.state.history[this.state.index];
 
       return (
-        <div className="w-75">
+        <div className="">
           <div className="" style={{ marginTop: 5 }}>
             <h5>
               {/* Game {" "}
@@ -251,57 +260,73 @@ export default class Game extends React.Component {
             </h5>
           </div>
 
-          <Grid container spacing={0} direction="row">
-            {this.state.players.map((p, k) => {
-              return (
-                <Grid item key={k} xs={3}>
-                  <Paper align="center" style={{ padding: 2 }}>
-                    {p.name}
-                  </Paper>
-                </Grid>
-              );
-            })}
+          <TableContainer>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  {this.state.players.map((p, k) => {
+                    return (
+                      <TableCell key={k}>
+                        <Typography variant="h5" color="primary">
+                          {p.name}
+                        </Typography>
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              </TableHead>
 
-            {gameState.map((g, k) => {
-              return g.players.map(p => {
-                return p.map((pp, kk) => {
+              <TableBody>
+                {gameState.map((g, k) => {
                   return (
-                    <Grid item key={k} xs={3}>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={pp.done === 1}
-                            onChange={() => {
-                              this.hadleCheckV2(pp);
-                            }}
-                            value={g.name}
-                            icon={
-                              <CheckBoxOutlineBlankIcon
-                                fontSize="small"
-                                // color="primary"
-                                style={{ color: '999' }}
+                    <TableRow key={k}>
+                      {g.players.map(p => {
+                        return p.map((pp, kk) => {
+                          return (
+                            <TableCell key={kk}>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    // size="small"
+                                    checked={pp.done === 1}
+                                    onChange={() => {
+                                      this.hadleCheckV2(pp);
+                                    }}
+                                    value={g.name}
+                                    icon={
+                                      <CheckBoxOutlineBlankIcon
+                                        fontSize="small"
+                                        // color="primary"
+                                        style={{ color: '999' }}
+                                      />
+                                    }
+                                    checkedIcon={
+                                      <CheckBoxIcon
+                                        fontSize="small"
+                                        color="primary"
+                                      />
+                                    }
+                                  />
+                                }
+                                label={
+                                  <Typography
+                                    variant="caption"
+                                    className={pp.done ? 'gameIsDone' : ''}
+                                  >
+                                    {g.name}
+                                  </Typography>
+                                }
                               />
-                            }
-                            checkedIcon={
-                              <CheckBoxIcon fontSize="small" color="primary" />
-                            }
-                          />
-                        }
-                        label={
-                          <Typography
-                            variant="caption"
-                            className={pp.done ? 'gameIsDone' : ''}
-                          >
-                            {g.name}
-                          </Typography>
-                        }
-                      />
-                    </Grid>
+                            </TableCell>
+                          );
+                        });
+                      })}
+                    </TableRow>
                   );
-                });
-              });
-            })}
-          </Grid>
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
           <div>
             <h5>
@@ -344,78 +369,94 @@ export default class Game extends React.Component {
               this.updateScores(gameScores);
             }}
           >
-            <Grid container spacing={1}>
-              <Grid item xs={4}></Grid>
-              {this.state.players.map((p, k) => {
-                return (
-                  <Grid item key={k} xs={2}>
-                    {p.name}
-                  </Grid>
-                );
-              })}
-              {/* <Grid item xs={2}></Grid> */}
-              {this.state.currentGame === undefined && (
-                <Grid item xs={4}>
-                  Select
-                </Grid>
-              )}
-              {this.state.currentGame !== undefined && (
-                <React.Fragment>
-                  <Grid item xs={2}>
-                    <button type="submit">Update</button>
-                  </Grid>
-                  <Grid item xs={2}>
-                    {this.state.currentTotalPoints}
-                  </Grid>
-                </React.Fragment>
-              )}
-              {this.state.players.map((p, k) => {
-                return (
-                  <Grid item xs={2}>
-                    <input
-                      // type="number"
-                      autoComplete="off"
-                      name={p.name}
-                      // onBlur={this.handleScoreChange}
-                      onBlur={this.handleScoreChangeV2}
-                      maxLength={7}
-                      size={7}
-                    />
-                  </Grid>
-                );
-              })}
-              <Grid item xs={4}>
-                Totals:
-              </Grid>
-              {this.state.players.map((p, k) => {
-                return (
-                  <Grid item key={k} xs={2}>
-                    {' '}
-                    {p.score}
-                  </Grid>
-                );
-              })}
-              {/* <Grid item xs={2}></Grid> */}
-              {this.state.scores.map((s, k) => {
-                return (
-                  <React.Fragment>
-                    <Grid item xs={4}>
-                      <Typography>
-                        {s[0].gameName} | {s[0].player}
-                      </Typography>
-                    </Grid>
-                    {s[0].gameScores.map((ss, kk) => {
+            <TableContainer component={Paper}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>
+                      {this.state.currentGame !== undefined && (
+                        <Button type="submit">
+                          <DoneOutlineTwoToneIcon color="primary"></DoneOutlineTwoToneIcon>
+                        </Button>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {this.state.currentGame !== undefined &&
+                        this.state.currentTotalPoints}
+                    </TableCell>
+                    {this.state.players.map((p, k) => {
                       return (
-                        <Grid item key={kk} xs={2}>
-                          {ss.value}
-                        </Grid>
+                        <TableCell key={k}>
+                          {this.state.currentGame !== undefined && (
+                            <input
+                              // type="number"
+                              autoComplete="off"
+                              name={p.name}
+                              // onBlur={this.handleScoreChange}
+                              onBlur={this.handleScoreChangeV2}
+                              maxLength={5}
+                              size={5}
+                            />
+                          )}
+                        </TableCell>
                       );
                     })}
-                    {/* <Grid item></Grid> */}
-                  </React.Fragment>
-                );
-              })}
-            </Grid>
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  <TableRow>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                    {this.state.players.map((p, k) => {
+                      return (
+                        <TableCell key={k} align="right">
+                          <Typography variant="h5" color="primary">
+                            {p.name}
+                          </Typography>
+                        </TableCell>
+                      );
+                    })}
+                    <TableCell></TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={2}>
+                      <Typography variant="h6" color="secondary">
+                        {/* Totals: */}
+                      </Typography>
+                    </TableCell>
+                    {this.state.players.map((p, k) => {
+                      return (
+                        <TableCell key={k} align="right">
+                          <Typography variant="h6" color="secondary">
+                            {p.score}
+                          </Typography>
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                  {this.state.scores.map((s, k) => {
+                    return (
+                      <TableRow key={k}>
+                        <TableCell align="right">
+                          <Typography>{s[0].player}</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography>{s[0].gameName}</Typography>
+                        </TableCell>
+                        {s[0].gameScores.map((ss, kk) => {
+                          return (
+                            <TableCell key={kk} align="right">
+                              {ss.value !== 0 ? ss.value : ''}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </form>
           {/* <button className="btn btn-primary" onClick={this.saveGame}>Save Game</button> */}
         </div>

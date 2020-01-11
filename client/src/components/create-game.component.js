@@ -13,6 +13,9 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
 
+import AddBoxRoundedIcon from '@material-ui/icons/AddBoxRounded';
+import { Button } from '@material-ui/core';
+
 export default class CreateGame extends React.Component {
   constructor(props) {
     super(props);
@@ -108,16 +111,18 @@ export default class CreateGame extends React.Component {
               />
             </div>
             <div className="col-4">
-              <button
-                className="btn btn-secondary btn-block"
+              <Button
+                color="primary"
+                size="large"
+                disabled={this.state.currentPlayer.length <= 3}
                 onClick={e => {
                   this.addPlayer();
                   console.log(this.myRef);
                   this.myRef.current.focus();
                 }}
               >
-                Add
-              </button>
+                <AddBoxRoundedIcon></AddBoxRoundedIcon>
+              </Button>
             </div>
           </div>
           <div>
