@@ -9,14 +9,14 @@ env.config();
 
 const gameRoutes = express.Router();
 
-const PORT = 37302;
+const PORT = 37303;
 
 const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
 
-mongoose.connect('mongodb://127.0.0.1:27017/games', {
+mongoose.connect('mongodb://127.0.0.1:27017/gamesnew', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
