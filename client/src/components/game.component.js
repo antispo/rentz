@@ -18,6 +18,7 @@ import {
   Button
 } from '@material-ui/core';
 import DoneOutlineTwoToneIcon from '@material-ui/icons/DoneOutlineTwoTone';
+import Grid from '@material-ui/core/Grid';
 
 export default class Game extends React.Component {
   constructor(props) {
@@ -328,14 +329,37 @@ export default class Game extends React.Component {
             </Table>
           </TableContainer>
 
-          <div>
+          {/* <div>
             <h5>
               {this.state.currentGame !== undefined &&
               this.state.currentPlayerName !== undefined
                 ? `${this.state.currentGame} | ${this.state.currentPlayerName}`
                 : `Select a game`}
             </h5>
-          </div>
+          </div> */}
+          <Grid container>
+            {this.state.currentGame !== undefined &&
+            this.state.currentPlayerName !== undefined ? (
+              <Grid item xs>
+                <Grid container>
+                  <Grid item xs>
+                    <Typography variant="h5" color="primary">
+                      {this.state.currentPlayerName}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs>
+                    <Typography variant="h5" color="primary">
+                      {this.state.currentGame}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
+            ) : (
+              <Grid item xs={12}>
+                <Typography variant="h5">Select a game</Typography>
+              </Grid>
+            )}
+          </Grid>
 
           <form
             ref={this.updateFormRef}
@@ -374,30 +398,27 @@ export default class Game extends React.Component {
                 <TableHead>
                   <TableRow>
                     <TableCell>
-                      {this.state.currentGame !== undefined && (
-                        <Button type="submit">
-                          <DoneOutlineTwoToneIcon color="primary"></DoneOutlineTwoToneIcon>
-                        </Button>
-                      )}
+                      <Button type="submit">
+                        <DoneOutlineTwoToneIcon color="primary"></DoneOutlineTwoToneIcon>
+                      </Button>
                     </TableCell>
                     <TableCell>
-                      {this.state.currentGame !== undefined &&
-                        this.state.currentTotalPoints}
+                      <Typography variant="h5" color="secondary">
+                        {this.state.currentGame !== undefined &&
+                          this.state.currentTotalPoints}
+                      </Typography>
                     </TableCell>
                     {this.state.players.map((p, k) => {
                       return (
-                        <TableCell key={k}>
-                          {this.state.currentGame !== undefined && (
-                            <input
-                              // type="number"
-                              autoComplete="off"
-                              name={p.name}
-                              // onBlur={this.handleScoreChange}
-                              onBlur={this.handleScoreChangeV2}
-                              maxLength={5}
-                              size={5}
-                            />
-                          )}
+                        <TableCell key={k} align="right">
+                          <input
+                            autoComplete="off"
+                            name={p.name}
+                            onBlur={this.handleScoreChangeV2}
+                            maxLength={5}
+                            size={5}
+                          />
+                          {/* )} */}
                         </TableCell>
                       );
                     })}

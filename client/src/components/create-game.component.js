@@ -1,5 +1,4 @@
 import React from 'react';
-import DateTimePicker from 'react-datetime-picker';
 import axios from 'axios';
 import { createRentzGame } from './rentz.component';
 import API_URL from './api';
@@ -14,7 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 import AddBoxRoundedIcon from '@material-ui/icons/AddBoxRounded';
-import { Button } from '@material-ui/core';
+import { Button, TextField } from '@material-ui/core';
 
 export default class CreateGame extends React.Component {
   constructor(props) {
@@ -72,8 +71,6 @@ export default class CreateGame extends React.Component {
     axios.post(API_URL + '/games/add', newGame).then(res => {
       this.props.history.push('/game/' + res.data._id);
     });
-
-    // this.setState({timestamp: new Date(), players: []})
   };
 
   removePlayer = name => {
@@ -85,92 +82,66 @@ export default class CreateGame extends React.Component {
 
   render() {
     return (
-      <div className="w-50">
-        <Typography variant="h4" style={{ marginTop: 10, marginBottom: 10 }}>
+      <React.Fragment>
+        <Typography variant="h5" style={{ marginTop: 10, marginBottom: 10 }}>
           Create Game
         </Typography>
-        <div className="form-group">
-          <label>Date & Time: </label>
-          <br />
-          <div className="table-light mw-20">
-            <DateTimePicker
-              onChange={this.onChangeGameTimestamp}
-              value={this.state.timestamp}
-            />
-          </div>
-          <br />
-          <div className="row">
-            <div className="col-8">
-              <input
-                type="text"
-                name="player"
-                ref={this.myRef}
-                className="form-control"
-                value={this.state.currentPlayer}
-                onChange={this.handleNewPlayer}
-              />
-            </div>
-            <div className="col-4">
-              <Button
-                color="primary"
-                size="large"
-                disabled={this.state.currentPlayer.length <= 3}
-                onClick={e => {
-                  this.addPlayer();
-                  console.log(this.myRef);
-                  this.myRef.current.focus();
-                }}
-              >
-                <AddBoxRoundedIcon></AddBoxRoundedIcon>
-              </Button>
-            </div>
-          </div>
-          <div>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <Typography
-                  variant="h6"
-                  className=""
-                  style={{ marginTop: 10, marginBottom: 10 }}
-                >
-                  Players
-                </Typography>
-                <div className="">
-                  <List dense={false}>
-                    {this.state.players.length !== 0 &&
-                      this.state.players.map((p, k) => {
-                        return (
-                          <ListItem key={k}>
-                            <ListItemText primary={p.name} />
-                            <ListItemSecondaryAction>
-                              <IconButton
-                                edge="end"
-                                aria-label="delete"
-                                onClick={e => {
-                                  this.removePlayer(p.name);
-                                }}
-                              >
-                                <DeleteIcon color="primary" />
-                              </IconButton>
-                            </ListItemSecondaryAction>
-                          </ListItem>
-                        );
-                      })}
-                  </List>
-                </div>
-              </Grid>
+        <TextField
+          ref={this.myRef}
+          label="New player"
+          value={this.state.currentPlayer}
+          onChange={this.handleNewPlayer}
+        ></TextField>
+        <Button
+          color="primary"
+          size="large"
+          disabled={this.state.currentPlayer.length <= 3}
+          onClick={e => {
+            this.addPlayer();
+            this.myRef.current.focus();
+          }}
+        >
+          <AddBoxRoundedIcon></AddBoxRoundedIcon>
+        </Button>
+        <div>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <List dense={false}>
+                {this.state.players.length !== 0 &&
+                  this.state.players.map((p, k) => {
+                    return (
+                      <ListItem button key={k}>
+                        <ListItemText primary={p.name} />
+                        <ListItemSecondaryAction>
+                          <IconButton
+                            variant="contained"
+                            edge="end"
+                            aria-label="delete"
+                            onClick={e => {
+                              this.removePlayer(p.name);
+                            }}
+                          >
+                            <DeleteIcon color="secondary" />
+                          </IconButton>
+                        </ListItemSecondaryAction>
+                      </ListItem>
+                    );
+                  })}
+              </List>
             </Grid>
-          </div>
-          <br />
-          <button
-            className="btn btn-primary btn-block"
-            type="submit"
-            onClick={this.onSubmit}
-          >
-            New Game
-          </button>
+          </Grid>
         </div>
-      </div>
+        <br />
+        <Button
+          variant="contained"
+          type="submit"
+          onClick={this.onSubmit}
+          color="primary"
+          disabled={this.state.players.length < 3}
+        >
+          New Game
+        </Button>
+      </React.Fragment>
     );
   }
 }
